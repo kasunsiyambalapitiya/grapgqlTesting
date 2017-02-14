@@ -295,5 +295,24 @@ class GettingBlameCommit extends Demo {
     public void setUrlForGetingFilesChanged(String repoName,String commitHash) {
         this.urlForGetingFilesChanged ="http://api.github.com/repos/"+repoName+"/commits/"+commitHash;
     }
+    
+    //================ obtaining PR for each commit and saving them in a file ===================================
+    public void obtainingRepoNamesForCommitHashes() throws IOException{
+
+
+        for(String commitHash: patchInformation_svnRevisionpublic){
+
+            setUrlForSearchingCommits(commitHash);
+
+
+            //calling the API calling method
+            callingTheAPI(getUrlForSearchingCommits(),jsonOutPutFileOfSearchCommitAPI,true,true,false);
+//            saveRepoNamesInAnArray(commitHash);
+
+        }
+
+
+
+    }
 }
 
