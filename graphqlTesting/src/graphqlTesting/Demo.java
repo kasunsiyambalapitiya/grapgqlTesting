@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.http.client.ClientProtocolException;
@@ -40,6 +41,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+
 
 public class Demo {
     private String token;
@@ -261,3 +264,36 @@ public class Demo {
 
     }
 }
+
+class GettingBlameCommit extends Demo {
+
+    private String jsonOutPutFileOfSearchCommitAPI="jsonOutPutFileOfSearchCommitAPI.json";
+    private String urlForObtainingCommits,urlForGetingFilesChanged;
+
+    protected ArrayList<String> fileNames = new ArrayList<String>();
+    protected List<ArrayList<String>> lineRangesChanged= new ArrayList<ArrayList<String>>();      // for saving the line no that are changed
+    JSONObject graphqlApiJsonObject= new JSONObject();
+
+
+
+
+
+    private String repoLocation[];
+
+
+    public String getUrlForSearchingCommits() {
+        return urlForObtainingCommits;
+    }
+
+    public void setUrlForSearchingCommits(String commitHash) {
+        this.urlForObtainingCommits = "https://api.github.com/search/commits?q=hash%3A"+commitHash;
+    }
+
+    public String getUrlForGetingFilesChanged() {
+        return urlForGetingFilesChanged;
+    }
+    public void setUrlForGetingFilesChanged(String repoName,String commitHash) {
+        this.urlForGetingFilesChanged ="http://api.github.com/repos/"+repoName+"/commits/"+commitHash;
+    }
+}
+
