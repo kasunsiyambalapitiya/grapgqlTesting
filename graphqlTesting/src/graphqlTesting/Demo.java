@@ -20,10 +20,20 @@
 
 package graphqlTesting;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.simple.parser.JSONParser;
 
 public class Demo {
@@ -88,5 +98,104 @@ public class Demo {
 
 //        callingTheAPI(urlForObtainingCommitHashes,jsonOutPutFileOfCommits,true,false,false);
 
+    }
+    
+
+    //=========== calling the relevant API and saving the output to a file===============================================
+
+    public void  callingTheAPI(String URL, String file,boolean requireToken,boolean requireCommitHeader,boolean requireReviewHeader) throws IOException{
+
+        BufferedReader bufferedReader= null;
+        CloseableHttpClient httpclient= null;
+        CloseableHttpResponse httpResponse= null;
+        BufferedWriter bufferedWriter= null;
+
+
+        //================ To do: 
+        //                try(BufferedReader bufferedReader= new BufferedReader(new InputStreamReader (httpResponse.getEntity().getContent()))){
+        //                    StringBuilder stringBuilder= new StringBuilder();
+        //                    String line;
+        //                    while((line=bufferedReader.readLine())!=null){
+        //                        stringBuilder.append(line);
+        //        
+        //                    }
+        //        
+        //                    System.out.println(stringBuilder.toString()); 
+        //        
+        //        
+        //                }
+
+
+        try {
+            httpclient = HttpClients.createDefault();
+            HttpGet httpGet= new HttpGet(URL);
+
+            if(requireToken==true){
+
+                httpGet.addHeader("Authorization","Bearer "+getToken());        // passing the token for the API call
+            }
+
+            //as the accept header is needed for the review API since it is still in preview mode   
+            if(requireReviewHeader==true){
+                httpGet.addHeader("Accept","application/vnd.github.black-cat-preview+json");
+
+            }
+
+            //as the accept header is needed for accessing commit search API which is still in preview mode
+            if(requireCommitHeader==true){
+                httpGet.addHeader("Accept","application/vnd.github.cloak-preview");
+            }
+
+            httpResponse=httpclient.execute(httpGet);
+            int responseCode= httpResponse.getStatusLine().getStatusCode();     // to get the response code
+
+            //System.out.println("Response Code: "+responseCode);
+
+            bufferedReader= new BufferedReader(new InputStreamReader (httpResponse.getEntity().getContent()));
+
+            StringBuilder stringBuilder= new StringBuilder();
+            String line;
+            while((line=bufferedReader.readLine())!=null){
+                stringBuilder.append(line);
+
+            }
+
+            //System.out.println("Recieved JSON "+stringBuilder.toString());
+
+            //------- writing the content received from the response to the given file location------------
+
+            File fileLocator= new File(location+file);
+            fileLocator.getParentFile().mkdirs();
+            bufferedWriter= new BufferedWriter(new FileWriter (fileLocator));
+            bufferedWriter.write(stringBuilder.toString());
+        } 
+
+        catch (ClientProtocolException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        finally{
+            if(bufferedWriter != null){
+                bufferedWriter.close();
+            }
+
+            if (bufferedReader != null){
+                bufferedReader.close();
+            }
+
+            if(httpResponse != null){
+                httpResponse.close();
+            }
+            if (httpclient != null){
+                httpclient.close();
+            }
+
+
+        }
     }
 }
