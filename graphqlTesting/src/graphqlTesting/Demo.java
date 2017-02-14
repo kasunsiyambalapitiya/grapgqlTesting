@@ -23,6 +23,8 @@ package graphqlTesting;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,7 +36,10 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class Demo {
     private String token;
@@ -197,5 +202,62 @@ public class Demo {
 
 
         }
+    }
+    
+    //  ===================== getting the commit IDs from the above saved file ============================================
+
+    public void getThePublicGitCommitId(){
+        try{
+            JSONArray jsonArray= (JSONArray)parser.parse(new FileReader(location+jsonOutPutFileOfCommits));
+
+            for(int i=0; i<jsonArray.size();i++){
+                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+
+                String tempName= (String)jsonObject.get("name");
+
+                if(tempName.equals("patchInformation_svnRevisionpublic")){
+                    JSONArray tempCommitsJSONArray= (JSONArray)jsonObject.get("value");
+
+                    //initializing the patchInformation_svnRevisionpublic array
+
+                    patchInformation_svnRevisionpublic= new String [tempCommitsJSONArray.size()];  
+
+                    for(int j =0; j< tempCommitsJSONArray.size();j++){
+
+
+                        patchInformation_svnRevisionpublic[j]=(String)tempCommitsJSONArray.get(j);
+
+
+                    }
+
+                    break;
+                }
+
+            }
+
+            System.out.println("The commit Ids are");
+
+
+            //            for printing all the commits ID associated with a patch
+            for (String tmp: patchInformation_svnRevisionpublic){
+                System.out.println(tmp);
+            }
+            System.out.println();
+
+        }
+        catch(FileNotFoundException e){
+            System.out.println("JSON file is not found");
+            e. printStackTrace();
+
+
+        }
+        catch (ParseException e){
+            System.out.println("Parse Execption occured");
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 }
