@@ -360,7 +360,7 @@ class GettingBlameCommit extends Demo {
                 lineRangesChanged.clear();
 
 
-//                callingToGetFilesChanged(repoLocation[i],commitHash); 
+                callingToGetFilesChanged(repoLocation[i],commitHash); 
 
 
                 //            calling the graphql API for getting blame information
@@ -394,6 +394,34 @@ class GettingBlameCommit extends Demo {
                 //                =========================== testing new one ================================
             }
         }
+
+
+    }
+    
+    public void callingToGetFilesChanged(String repoLocation, String commitHash){
+
+        //        setting the URL for calling github single commit API
+
+        setUrlForGetingFilesChanged(repoLocation,commitHash);
+
+        //file name for saving the output
+        String savingLocation= repoLocation+"/"+commitHash+".json";
+
+        //saving the commit details for the commit hash on the relevant repository
+        try {
+            callingTheAPI(getUrlForGetingFilesChanged(), savingLocation, true,false,false);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+
+
+        //----calling savingRelaventFileNamesAndEditLineNumbers method to read the above saved json output----
+//        savingRelaventFileNamesAndEditLineNumbers(savingLocation);
+
+
+
 
 
     }
