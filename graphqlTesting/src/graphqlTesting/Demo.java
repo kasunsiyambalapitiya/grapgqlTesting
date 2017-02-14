@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -307,10 +308,92 @@ class GettingBlameCommit extends Demo {
 
             //calling the API calling method
             callingTheAPI(getUrlForSearchingCommits(),jsonOutPutFileOfSearchCommitAPI,true,true,false);
-//            saveRepoNamesInAnArray(commitHash);
+            saveRepoNamesInAnArray(commitHash);
 
         }
+        
+        
 
+
+
+    }
+    //================================= saving the  Repo Names in the array and calling to Get files content========================================
+
+    public void saveRepoNamesInAnArray(String commitHash){
+        try{
+
+
+            JSONObject rootJsonObject= (JSONObject)parser.parse(new FileReader(location+jsonOutPutFileOfSearchCommitAPI));
+            JSONArray jsonArrayOfItems= (JSONArray)rootJsonObject.get("items");
+
+            // setting the size of the repoLocationArray
+            repoLocation= new String [jsonArrayOfItems.size()];
+
+            for(int i=0; i<jsonArrayOfItems.size();i++){
+                JSONObject jsonObject = (JSONObject) jsonArrayOfItems.get(i);
+
+                JSONObject repositoryJsonObject= (JSONObject)jsonObject.get("repository");
+
+                //adding the repo name to the array
+                repoLocation[i]= (String)repositoryJsonObject.get("full_name");
+
+            }
+        }
+
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch(ParseException e){
+            e.printStackTrace();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+
+        //        for running through the repoName Array 
+        for(int i =0; i< repoLocation.length;i++){
+
+            if(StringUtils.contains(repoLocation[i],"wso2/")){
+
+                //clearing all the data in the current fileNames and lineRangesChanged arraylists for each repository
+                fileNames.clear();
+                lineRangesChanged.clear();
+
+
+//                callingToGetFilesChanged(repoLocation[i],commitHash); 
+
+
+                //            calling the graphql API for getting blame information
+
+
+                //====================================================================================================================================================
+                //                try {
+
+                //                    callingGraphqlApi(repoLocation[i],commitHash,false);
+                //
+                //                    // reading the blame thus received from graphql API
+                //                    readingBlameOfFile(repoLocation[i],commitHash,false);
+
+
+
+
+
+                //                } catch (IOException e) {
+                //                   // TODO Auto-generated catch block
+                //                    e.printStackTrace();
+                //                }
+
+                //====================================================================================================================================================
+
+
+//                iteratingOver(repoLocation[i],commitHash);
+
+
+
+
+                //                =========================== testing new one ================================
+            }
+        }
 
 
     }

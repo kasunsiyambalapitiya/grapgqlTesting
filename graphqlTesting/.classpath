@@ -14,5 +14,11 @@
 	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/httpcomponents-client-4.5.2/lib/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/httpcomponents-client-4.5.2/lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/httpcomponents-client-4.5.2/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/commons-lang3-3.5-bin.zip"/>
+	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/commons-lang3-3.5/commons-lang3-3.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/commons-lang3-3.5/commons-lang3-3.5-tests.jar"/>
+	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/commons-lang3-3.5/commons-lang3-3.5-test-sources.jar"/>
+	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/commons-lang3-3.5/commons-lang3-3.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/kasun/Downloads/Softwares/commons-lang3-3.5/commons-lang3-3.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
