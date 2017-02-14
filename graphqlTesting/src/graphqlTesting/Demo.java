@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -418,7 +419,106 @@ class GettingBlameCommit extends Demo {
 
 
         //----calling savingRelaventFileNamesAndEditLineNumbers method to read the above saved json output----
-//        savingRelaventFileNamesAndEditLineNumbers(savingLocation);
+        savingRelaventFileNamesAndEditLineNumbers(savingLocation);
+
+
+
+
+
+    }
+    //    ======saving relevant file names and their edit line numbers =================================
+
+    public void savingRelaventFileNamesAndEditLineNumbers(String savingLocation){
+
+        //read the json output
+        try {
+
+            JSONObject rootJsonObject=(JSONObject) parser.parse(new FileReader(location+savingLocation));
+            Object checkObject= rootJsonObject.get("files");
+            //checking if the json stream received for element "files" is a jsonObject or a jsonArray
+
+            if(checkObject instanceof JSONObject ){
+                // if it is a JSONObject then only one file has been changed from the commit
+
+                // then casting the checkObject to a JSONObject
+                JSONObject filesJsonObject=(JSONObject)checkObject;
+                String fileName=(String)filesJsonObject.get("filename");
+                fileNames.add(fileName);
+
+                //filtering only the line no that are modified
+
+                String patch= (String)filesJsonObject.get("patch");
+                String lineChanges[]=StringUtils.substringsBetween(patch,"@@", "@@");
+
+
+            }
+
+            // in genaral the code comes here--------------------------------------------
+            else if (checkObject instanceof JSONArray){
+                //                 more than one file has been changed by the relevant commit
+                JSONArray fileJsonArray= (JSONArray)checkObject;
+
+                // to save one file at a time
+                for(int i =0; i< fileJsonArray.size();i++){
+                    JSONObject tempJsonObject= (JSONObject) fileJsonArray.get(i);
+                    String fileName= (String)tempJsonObject.get("filename");
+                    //saving the file name in the filename arraylist
+                    fileNames.add(fileName);
+
+                    //filtering only the line ranges that are modified and saving to a string array
+                    String patch= (String)tempJsonObject.get("patch");
+                    String lineChanges[]= StringUtils.substringsBetween(patch,"@@","@@");
+
+                    //filtering only the lines that existed in the previous file and saving them in to the same array
+                    for (int j=0; j<lineChanges.length;j++){
+
+                        String tempString= lineChanges[i];
+                        String tempStringWithLinesBeingModified = StringUtils.substringBetween(tempString,"-"," +");
+
+                        int intialLineNo= Integer.parseInt(StringUtils.substringBefore(tempStringWithLinesBeingModified, ","));
+                        int tempEndLineNo= Integer.parseInt(StringUtils.substringAfter(tempStringWithLinesBeingModified,","));
+                        int endLineNo= intialLineNo+ (tempEndLineNo-1);
+
+                        // storing the line ranges that are being modified in the same array by replacing values
+                        lineChanges[j]=intialLineNo+","+endLineNo;
+
+                    }
+
+                    ArrayList<String> tempArrayList= new ArrayList<String>(Arrays.asList(lineChanges));
+
+                    //adding to the array list which keep track of the line ranges which are being changed to the main arrayList
+                    lineRangesChanged.add(tempArrayList);
+
+
+
+
+
+
+
+                }
+
+                System.out.println("done saving file names and their relevant modification line ranges");
+                System.out.println(fileNames);
+                System.out.println(lineRangesChanged);
+
+
+            }
+
+
+
+
+
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
 
 
