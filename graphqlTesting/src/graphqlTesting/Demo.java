@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -387,7 +388,7 @@ class GettingBlameCommit extends Demo {
                 //====================================================================================================================================================
 
 
-//                iteratingOver(repoLocation[i],commitHash);
+                iteratingOver(repoLocation[i],commitHash);
 
 
 
@@ -525,5 +526,49 @@ class GettingBlameCommit extends Demo {
 
 
     }
-}
+    
+    //============================ iterating and calling graphql==================================================
+    public void iteratingOver(String repoLocation, String commitHash){
+
+        // filtering the owner and the repository name from the repoLocation
+        String owner= StringUtils.substringBefore(repoLocation,"/");
+        String repositoryName= StringUtils.substringAfter(repoLocation,"/");
+
+        String locationOfTheSavedFile= null;
+
+
+        //        iterating over the fileNames arraylist for the given commit
+        Iterator iteratorForFileNames= fileNames.iterator();
+
+        while(iteratorForFileNames.hasNext()){
+            String fileName= (String)iteratorForFileNames.next();
+
+
+            graphqlApiJsonObject.put("query","{repository(owner:\""+owner+"\",name:\""+repositoryName+"\"){object(expression:\""+commitHash+"\"){ ... on Commit{blame(path:\""+fileName+"\"){ranges{startingLine endingLine age commit{history(first: 2) { edges { node {  message url } } } author { name email } } } } } } } }");
+
+//            try{
+//                //            calling the graphql API for getting blame information for the current file and saving it in a location.
+//                locationOfTheSavedFile= callingGraphQl(graphqlApiJsonObject,fileName,commitHash,repoLocation);
+//
+//            }
+//            catch(IOException e){
+//                e.printStackTrace();
+            }
+            //            reading the above saved output for the current file name
+
+
+
+//            readingTheBlameReceived(locationOfTheSavedFile,fileName,owner,repositoryName,repoLocation);
+
+
+
+
+
+
+        }
+
+
+    }
+
+
 
